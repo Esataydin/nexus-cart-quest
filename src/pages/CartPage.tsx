@@ -12,14 +12,15 @@ interface CartItem {
   productId: number;
   productName: string;
   productPrice: number;
+  productCategory: string;
   quantity: number;
-  subtotal: number;
+  totalPrice: number;
 }
 
 interface Cart {
-  id: number;
   items: CartItem[];
-  total: number;
+  totalAmount: number;
+  totalItems: number;
 }
 
 const CartPage: React.FC = () => {
@@ -209,7 +210,7 @@ const CartPage: React.FC = () => {
                     </div>
                     
                     <div className="text-right">
-                      <p className="font-semibold">${(item.subtotal || 0).toFixed(2)}</p>
+                      <p className="font-semibold">${(item.totalPrice || 0).toFixed(2)}</p>
                     </div>
                     
                     <Button
@@ -234,21 +235,21 @@ const CartPage: React.FC = () => {
                 <CardTitle>Order Summary</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  {cart.items.map((item) => (
-                    <div key={item.id} className="flex justify-between text-sm">
-                      <span>{item.productName} × {item.quantity}</span>
-                      <span>${(item.subtotal || 0).toFixed(2)}</span>
-                    </div>
-                  ))}
-                </div>
-                
-                <div className="border-t pt-4">
-                  <div className="flex justify-between font-semibold text-lg">
-                    <span>Total</span>
-                    <span>${(cart.total || 0).toFixed(2)}</span>
-                  </div>
-                </div>
+                 <div className="space-y-2">
+                   {cart.items.map((item) => (
+                     <div key={item.id} className="flex justify-between text-sm">
+                       <span>{item.productName} × {item.quantity}</span>
+                       <span>${(item.totalPrice || 0).toFixed(2)}</span>
+                     </div>
+                   ))}
+                 </div>
+                 
+                 <div className="border-t pt-4">
+                   <div className="flex justify-between font-semibold text-lg">
+                     <span>Total</span>
+                     <span>${(cart.totalAmount || 0).toFixed(2)}</span>
+                   </div>
+                 </div>
                 
                 <Button 
                   onClick={handleCheckout}
