@@ -39,12 +39,19 @@ const HomePage: React.FC = () => {
           : '/api/products';
         
         const response = await axios.get(url);
-        setProducts(response.data);
+        
+        // Ensure response.data is an array
+        const productsData = Array.isArray(response.data) ? response.data : [];
+        setProducts(productsData);
         
         // Extract unique categories
-        const uniqueCategories = [...new Set(response.data.map((product: Product) => product.category))] as string[];
+        const uniqueCategories = [...new Set(productsData.map((product: Product) => product.category))] as string[];
         setCategories(uniqueCategories);
       } catch (error) {
+        console.error('Failed to fetch products:', error);
+        // Set empty arrays on error to prevent crashes
+        setProducts([]);
+        setCategories([]);
         toast({
           title: "Error",
           description: "Failed to load products. Please try again.",
@@ -60,14 +67,17 @@ const HomePage: React.FC = () => {
 
   // Filter products by search term
   useEffect(() => {
+    // Ensure products is always an array before filtering
+    const safeProducts = Array.isArray(products) ? products : [];
+    
     if (searchTerm) {
-      const filtered = products.filter(product =>
+      const filtered = safeProducts.filter(product =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.description?.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredProducts(filtered);
     } else {
-      setFilteredProducts(products);
+      setFilteredProducts(safeProducts);
     }
   }, [products, searchTerm]);
 
@@ -189,7 +199,7 @@ const HomePage: React.FC = () => {
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {filteredProducts.map((product) => (
+                {Array.isArray(filteredProducts) && filteredProducts.map((product) => (
                   <ProductCard
                     key={product.id}
                     product={product}
