@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ShoppingBag, ArrowLeft } from 'lucide-react';
+import { ShoppingBag, ArrowLeft, Trash2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
@@ -54,6 +54,70 @@ const CartPage: React.FC = () => {
     }
   };
 
+  const handleRemoveProduct = async (productId: number) => {
+    setIsUpdating(true);
+    try {
+      await axios.delete(`/api/cart/product/${productId}`);
+      toast({
+        title: "Product removed",
+        description: "Product has been removed from your cart.",
+      });
+      fetchCart(); // Refresh cart data
+    } catch (error: any) {
+      console.error('Remove product error:', error);
+      
+      let errorMessage = "Failed to remove product. Please try again.";
+      
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.response?.data?.error) {
+        errorMessage = error.response.data.error;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive"
+      });
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleClearCart = async () => {
+    setIsUpdating(true);
+    try {
+      await axios.delete('/api/cart');
+      toast({
+        title: "Cart cleared",
+        description: "All items have been removed from your cart.",
+      });
+      setCart({ items: [], totalAmount: 0, totalItems: 0 });
+    } catch (error: any) {
+      console.error('Clear cart error:', error);
+      
+      let errorMessage = "Failed to clear cart. Please try again.";
+      
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.response?.data?.error) {
+        errorMessage = error.response.data.error;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive"
+      });
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
 
   const handleCheckout = async () => {
     setIsUpdating(true);
@@ -64,10 +128,22 @@ const CartPage: React.FC = () => {
         description: "Your order has been placed successfully.",
       });
       navigate('/orders');
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Checkout error:', error);
+      
+      let errorMessage = "Failed to place order. Please try again.";
+      
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.response?.data?.error) {
+        errorMessage = error.response.data.error;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
       toast({
         title: "Checkout failed",
-        description: "Failed to place order. Please try again.",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {
@@ -131,10 +207,22 @@ const CartPage: React.FC = () => {
           <div className="lg:col-span-2">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center">
-                  <ShoppingBag className="mr-2 h-5 w-5" />
-                  Shopping Cart ({cart.items.length} {cart.items.length === 1 ? 'item' : 'items'})
-                </CardTitle>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center">
+                    <ShoppingBag className="mr-2 h-5 w-5" />
+                    Shopping Cart ({cart.items.length} {cart.items.length === 1 ? 'item' : 'items'})
+                  </CardTitle>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleClearCart}
+                    disabled={isUpdating || cart.items.length === 0}
+                    className="text-destructive hover:text-destructive"
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Clear Cart
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent className="space-y-4">
                 {cart.items.map((item) => (
@@ -153,6 +241,16 @@ const CartPage: React.FC = () => {
                     <div className="text-right">
                       <p className="font-semibold">${(item.totalPrice || 0).toFixed(2)}</p>
                     </div>
+                    
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleRemoveProduct(item.productId)}
+                      disabled={isUpdating}
+                      className="text-destructive hover:text-destructive p-2"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
                   </div>
                 ))}
               </CardContent>
