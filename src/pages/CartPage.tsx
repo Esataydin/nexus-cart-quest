@@ -184,7 +184,7 @@ const CartPage: React.FC = () => {
                     <div className="flex-1">
                       <h3 className="font-semibold">{item.productName}</h3>
                       <p className="text-sm text-muted-foreground">
-                        ${item.productPrice.toFixed(2)} each
+                        ${(item.productPrice || 0).toFixed(2)} each
                       </p>
                     </div>
                     
@@ -209,7 +209,7 @@ const CartPage: React.FC = () => {
                     </div>
                     
                     <div className="text-right">
-                      <p className="font-semibold">${item.subtotal.toFixed(2)}</p>
+                      <p className="font-semibold">${(item.subtotal || 0).toFixed(2)}</p>
                     </div>
                     
                     <Button
@@ -238,7 +238,7 @@ const CartPage: React.FC = () => {
                   {cart.items.map((item) => (
                     <div key={item.id} className="flex justify-between text-sm">
                       <span>{item.productName} × {item.quantity}</span>
-                      <span>${item.subtotal.toFixed(2)}</span>
+                      <span>${(item.subtotal || 0).toFixed(2)}</span>
                     </div>
                   ))}
                 </div>
@@ -246,7 +246,7 @@ const CartPage: React.FC = () => {
                 <div className="border-t pt-4">
                   <div className="flex justify-between font-semibold text-lg">
                     <span>Total</span>
-                    <span>${cart.total.toFixed(2)}</span>
+                    <span>${(cart.total || 0).toFixed(2)}</span>
                   </div>
                 </div>
                 
