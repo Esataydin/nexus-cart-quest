@@ -93,9 +93,9 @@ const Navbar: React.FC<NavbarProps> = ({ cartItemCount = 0 }) => {
                   </div>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link to="/dashboard" className="flex items-center">
+                    <Link to="/orders" className="flex items-center">
                       <User className="mr-2 h-4 w-4" />
-                      Dashboard
+                      Orders
                     </Link>
                   </DropdownMenuItem>
                   {user.role === 'ADMIN' && (

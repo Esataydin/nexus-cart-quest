@@ -49,12 +49,18 @@ const HomePage: React.FC = () => {
         setCategories(uniqueCategories);
       } catch (error) {
         console.error('Failed to fetch products:', error);
+        console.error('Error details:', {
+          message: error.message,
+          response: error.response?.data,
+          status: error.response?.status,
+          requestedCategory: selectedCategory
+        });
         // Set empty arrays on error to prevent crashes
         setProducts([]);
         setCategories([]);
         toast({
           title: "Error",
-          description: "Failed to load products. Please try again.",
+          description: `Failed to load products: ${error.response?.status || 'Network Error'}`,
           variant: "destructive"
         });
       } finally {
@@ -85,7 +91,7 @@ const HomePage: React.FC = () => {
     if (!user) return;
 
     try {
-      await axios.post('/api/cart/add', {
+      await axios.post('/api/cart', {
         productId,
         quantity: 1
       });

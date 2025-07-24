@@ -46,17 +46,20 @@ const AdminPage: React.FC = () => {
     description: '',
     imageUrl: ''
   });
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Don't navigate while auth is still loading
+    if (authLoading) return;
+    
     if (!user || user.role !== 'ADMIN') {
       navigate('/');
       return;
     }
     fetchProducts();
-  }, [user, navigate]);
+  }, [user, authLoading, navigate]);
 
   useEffect(() => {
     if (searchTerm) {
@@ -75,9 +78,19 @@ const AdminPage: React.FC = () => {
       const response = await axios.get('/api/products');
       setProducts(response.data);
     } catch (error) {
+      let errorMessage = "Failed to load products. Please try again.";
+      
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.response?.status === 403) {
+        errorMessage = "You don't have permission to view products.";
+      } else if (error.response?.status === 401) {
+        errorMessage = "Please log in to access the admin panel.";
+      }
+
       toast({
         title: "Error",
-        description: "Failed to load products. Please try again.",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {
@@ -154,9 +167,21 @@ const AdminPage: React.FC = () => {
       resetForm();
       fetchProducts();
     } catch (error) {
+      let errorMessage = "Failed to save product. Please try again.";
+      
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.response?.status === 400) {
+        errorMessage = "Invalid product data. Please check all fields.";
+      } else if (error.response?.status === 409) {
+        errorMessage = "A product with this name already exists.";
+      } else if (error.response?.status === 403) {
+        errorMessage = "You don't have permission to perform this action.";
+      }
+
       toast({
         title: "Error",
-        description: "Failed to save product. Please try again.",
+        description: errorMessage,
         variant: "destructive"
       });
     }
@@ -175,20 +200,34 @@ const AdminPage: React.FC = () => {
       });
       fetchProducts();
     } catch (error) {
+      let errorMessage = "Failed to delete product. Please try again.";
+      
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.response?.status === 409) {
+        errorMessage = "Cannot delete this product because it is referenced in existing orders.";
+      } else if (error.response?.status === 404) {
+        errorMessage = "Product not found.";
+      } else if (error.response?.status === 403) {
+        errorMessage = "You don't have permission to delete this product.";
+      }
+
       toast({
         title: "Error",
-        description: "Failed to delete product. Please try again.",
+        description: errorMessage,
         variant: "destructive"
       });
     }
   };
 
-  if (isLoading) {
+  if (authLoading || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading admin panel...</p>
+          <p className="text-muted-foreground">
+            {authLoading ? "Checking authentication..." : "Loading admin panel..."}
+          </p>
         </div>
       </div>
     );
@@ -271,7 +310,7 @@ const AdminPage: React.FC = () => {
                   </div>
                 </div>
                 
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <Label htmlFor="imageUrl">Image URL (optional)</Label>
                   <Input
                     id="imageUrl"
@@ -280,9 +319,9 @@ const AdminPage: React.FC = () => {
                     value={formData.imageUrl}
                     onChange={handleInputChange}
                   />
-                </div>
+                </div> */}
                 
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <Label htmlFor="description">Description (optional)</Label>
                   <Textarea
                     id="description"
@@ -291,7 +330,7 @@ const AdminPage: React.FC = () => {
                     onChange={handleInputChange}
                     rows={3}
                   />
-                </div>
+                </div> */}
                 
                 <div className="flex justify-end space-x-2">
                   <Button

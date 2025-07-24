@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShoppingCart, Package } from 'lucide-react';
+import { ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -45,21 +45,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
   return (
     <Card className="group hover:shadow-lg transition-all duration-300 hover:scale-[1.02] border-border bg-card">
       <CardContent className="p-4">
-        {/* Product Image */}
-        <div className="aspect-square bg-muted rounded-lg mb-4 flex items-center justify-center overflow-hidden">
-          {product.imageUrl ? (
-            <img 
-              src={product.imageUrl} 
-              alt={product.name}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            />
-          ) : (
-            <Package className="h-16 w-16 text-muted-foreground" />
-          )}
-        </div>
-
         {/* Product Info */}
-        <div className="space-y-2">
+        <div className="space-y-3">
           <div className="flex items-start justify-between">
             <h3 className="font-semibold text-lg text-card-foreground line-clamp-2 group-hover:text-primary transition-colors">
               {product.name}
@@ -68,12 +55,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
               {product.category}
             </Badge>
           </div>
-
-          {product.description && (
-            <p className="text-sm text-muted-foreground line-clamp-2">
-              {product.description}
-            </p>
-          )}
 
           <div className="flex items-center justify-between">
             <div className="flex flex-col">

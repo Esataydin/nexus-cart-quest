@@ -63,7 +63,7 @@ const CartPage: React.FC = () => {
         title: "Order placed!",
         description: "Your order has been placed successfully.",
       });
-      navigate('/dashboard');
+      navigate('/orders');
     } catch (error) {
       toast({
         title: "Checkout failed",
