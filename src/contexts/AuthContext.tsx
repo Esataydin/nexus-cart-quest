@@ -2,10 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
 interface User {
-  id: number;
   email: string;
-  firstName: string;
-  lastName: string;
   role: 'USER' | 'ADMIN';
 }
 
@@ -57,11 +54,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const checkAuth = async () => {
       if (token) {
         try {
-          // You might want to verify the token with your backend
-          // For now, we'll assume the token is valid if it exists
+          const userEmail = localStorage.getItem('userEmail');
+          const userRole = localStorage.getItem('userRole') as 'USER' | 'ADMIN';
+          if (userEmail && userRole) {
+            setUser({ email: userEmail, role: userRole });
+          }
           setIsLoading(false);
         } catch (error) {
           localStorage.removeItem('token');
+          localStorage.removeItem('userRole');
+          localStorage.removeItem('userEmail');
           setToken(null);
           setUser(null);
         }
@@ -83,11 +85,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       });
 
-      const { token: newToken, user: userData } = response.data;
+      const { token: newToken, email: userEmail, role } = response.data;
       
       localStorage.setItem('token', newToken);
+      localStorage.setItem('userRole', role);
+      localStorage.setItem('userEmail', userEmail);
       setToken(newToken);
-      setUser(userData);
+      setUser({ email: userEmail, role });
     } catch (error) {
       throw new Error('Login failed');
     }
@@ -113,6 +117,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('userEmail');
     setToken(null);
     setUser(null);
     delete axios.defaults.headers.common['Authorization'];

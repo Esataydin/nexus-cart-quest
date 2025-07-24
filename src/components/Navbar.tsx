@@ -81,13 +81,12 @@ const Navbar: React.FC<NavbarProps> = ({ cartItemCount = 0 }) => {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="sm" className="flex items-center space-x-2">
                     <User className="h-4 w-4" />
-                    <span className="hidden sm:inline">{user.firstName}</span>
+                    <span className="hidden sm:inline">{user.email}</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
                   <div className="flex flex-col space-y-1 p-2">
-                    <p className="text-sm font-medium">{user.firstName} {user.lastName}</p>
-                    <p className="text-xs text-muted-foreground">{user.email}</p>
+                    <p className="text-sm font-medium">{user.email}</p>
                     <Badge variant="secondary" className="w-fit text-xs">
                       {user.role}
                     </Badge>

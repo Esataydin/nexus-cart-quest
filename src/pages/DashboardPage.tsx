@@ -99,7 +99,7 @@ const DashboardPage: React.FC = () => {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">
-            Welcome back, {user?.firstName}!
+            Welcome back, {user?.email}!
           </h1>
           <p className="text-muted-foreground">
             Here's an overview of your account and recent orders.
