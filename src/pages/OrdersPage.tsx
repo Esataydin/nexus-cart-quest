@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Package, Calendar, ArrowLeft, ShoppingBag } from 'lucide-react';
+import { Package, Calendar, ArrowLeft, ShoppingBag, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -29,9 +30,20 @@ interface Order {
 const OrdersPage: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [openOrders, setOpenOrders] = useState<Set<number>>(new Set());
   const { user, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  const toggleOrder = (orderId: number) => {
+    const newOpenOrders = new Set(openOrders);
+    if (newOpenOrders.has(orderId)) {
+      newOpenOrders.delete(orderId);
+    } else {
+      newOpenOrders.add(orderId);
+    }
+    setOpenOrders(newOpenOrders);
+  };
 
   useEffect(() => {
     if (authLoading) return;
@@ -125,59 +137,74 @@ const OrdersPage: React.FC = () => {
         ) : (
           <div className="space-y-6">
             {orders.map((order) => (
-              <Card key={order.id} className="overflow-hidden">
-                <CardHeader className="bg-muted/50">
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
-                    <div>
-                      <CardTitle className="flex items-center">
-                        <Package className="mr-2 h-5 w-5" />
-                        Order #{order.id}
-                      </CardTitle>
-                      <p className="text-sm text-muted-foreground flex items-center mt-1">
-                        <Calendar className="mr-1 h-4 w-4" />
-                        {formatDate(order.createdAt)}
-                      </p>
-                    </div>
-                    <div className="text-right mt-2 sm:mt-0">
-                      <p className="text-2xl font-bold text-primary">
-                        ${order.totalAmount.toFixed(2)}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {order.totalItems} {order.totalItems === 1 ? 'item' : 'items'}
-                      </p>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="p-6">
-                  <div className="space-y-4">
-                    {order.items.map((item, index) => (
-                      <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+              <Collapsible key={order.id} open={openOrders.has(order.id)} onOpenChange={() => toggleOrder(order.id)}>
+                <Card className="overflow-hidden">
+                  <CollapsibleTrigger asChild>
+                    <CardHeader className="bg-muted/50 cursor-pointer hover:bg-muted/70 transition-colors">
+                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
                         <div className="flex-1">
-                          <div className="flex items-center space-x-4">
-                            <div className="flex-1">
-                              <h3 className="font-semibold">{item.productName}</h3>
-                              <div className="flex items-center space-x-2 mt-1">
-                                <Badge variant="secondary">{item.productCategory}</Badge>
-                                <span className="text-sm text-muted-foreground">
-                                  ${item.productPrice.toFixed(2)} each
-                                </span>
-                              </div>
-                            </div>
+                          <CardTitle className="flex items-center">
+                            <Package className="mr-2 h-5 w-5" />
+                            Order #{order.id}
+                          </CardTitle>
+                          <p className="text-sm text-muted-foreground flex items-center mt-1">
+                            <Calendar className="mr-1 h-4 w-4" />
+                            {formatDate(order.createdAt)}
+                          </p>
+                        </div>
+                        <div className="flex items-center space-x-4">
+                          <div className="text-right">
+                            <p className="text-2xl font-bold text-primary">
+                              ${order.totalAmount.toFixed(2)}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              {order.totalItems} {order.totalItems === 1 ? 'item' : 'items'}
+                            </p>
+                          </div>
+                          <div className="ml-4">
+                            {openOrders.has(order.id) ? (
+                              <ChevronUp className="h-5 w-5 text-muted-foreground" />
+                            ) : (
+                              <ChevronDown className="h-5 w-5 text-muted-foreground" />
+                            )}
                           </div>
                         </div>
-                        
-                        <div className="text-center mx-4">
-                          <span className="font-medium">Quantity: {item.quantity}</span>
-                        </div>
-                        
-                        <div className="text-right">
-                          <p className="font-semibold text-lg"> Total: ${item.totalPrice.toFixed(2)}</p>
-                        </div>
                       </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+                    </CardHeader>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <CardContent className="p-6">
+                      <div className="space-y-4">
+                        {order.items.map((item, index) => (
+                          <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+                            <div className="flex-1">
+                              <div className="flex items-center space-x-4">
+                                <div className="flex-1">
+                                  <h3 className="font-semibold">{item.productName}</h3>
+                                  <div className="flex items-center space-x-2 mt-1">
+                                    <Badge variant="secondary">{item.productCategory}</Badge>
+                                    <span className="text-sm text-muted-foreground">
+                                      ${item.productPrice.toFixed(2)} each
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div className="text-center mx-4">
+                              <span className="font-medium">Quantity: {item.quantity}</span>
+                            </div>
+                            
+                            <div className="text-right">
+                              <p className="font-semibold text-lg"> Total: ${item.totalPrice.toFixed(2)}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </CollapsibleContent>
+                </Card>
+              </Collapsible>
             ))}
           </div>
         )}
