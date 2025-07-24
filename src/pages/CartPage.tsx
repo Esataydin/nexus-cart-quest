@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft } from 'lucide-react';
+import { ShoppingBag, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
@@ -54,49 +54,6 @@ const CartPage: React.FC = () => {
     }
   };
 
-  const updateQuantity = async (cartItemId: number, newQuantity: number) => {
-    if (newQuantity < 1) return;
-    
-    setIsUpdating(true);
-    try {
-      await axios.put(`/api/cart/items/${cartItemId}`, {
-        quantity: newQuantity
-      });
-      await fetchCart(); // Refresh cart data
-      toast({
-        title: "Cart updated",
-        description: "Item quantity has been updated.",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update item quantity.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsUpdating(false);
-    }
-  };
-
-  const removeItem = async (cartItemId: number) => {
-    setIsUpdating(true);
-    try {
-      await axios.delete(`/api/cart/items/${cartItemId}`);
-      await fetchCart(); // Refresh cart data
-      toast({
-        title: "Item removed",
-        description: "Item has been removed from your cart.",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to remove item from cart.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsUpdating(false);
-    }
-  };
 
   const handleCheckout = async () => {
     setIsUpdating(true);
@@ -189,39 +146,13 @@ const CartPage: React.FC = () => {
                       </p>
                     </div>
                     
-                    <div className="flex items-center space-x-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                        disabled={isUpdating || item.quantity <= 1}
-                      >
-                        <Minus className="h-4 w-4" />
-                      </Button>
-                      <span className="w-8 text-center">{item.quantity}</span>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        disabled={isUpdating}
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
+                    <div className="text-center">
+                      <span className="font-medium">Quantity: {item.quantity}</span>
                     </div>
                     
                     <div className="text-right">
                       <p className="font-semibold">${(item.totalPrice || 0).toFixed(2)}</p>
                     </div>
-                    
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeItem(item.id)}
-                      disabled={isUpdating}
-                      className="text-destructive hover:text-destructive"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
                   </div>
                 ))}
               </CardContent>
