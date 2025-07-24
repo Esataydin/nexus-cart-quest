@@ -157,6 +157,8 @@ No additional environment variables are required for basic setup. All configurat
 - `DELETE /api/products/:id` - Delete product (Admin)
 - `GET /api/cart` - Get user's cart
 - `POST /api/cart` - Add item to cart
+- `DELETE /api/cart` - Clear entire cart
+- `DELETE /api/cart/product/:product_id` - Remove specific product from cart
 - `GET /api/orders` - Get user's orders
 - `POST /api/orders/from-cart` - Create order from cart
 
