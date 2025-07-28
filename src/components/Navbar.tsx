@@ -35,7 +35,7 @@ const Navbar: React.FC<NavbarProps> = ({ cartItemCount = 0 }) => {
             className="flex items-center space-x-2 text-xl font-bold text-primary hover:text-primary-hover transition-colors"
           >
             <Package className="h-6 w-6" />
-            <span>TechStore</span>
+            <span>E-Commerce</span>
           </Link>
 
           {/* Navigation Links */}

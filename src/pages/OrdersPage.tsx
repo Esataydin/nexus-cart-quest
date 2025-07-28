@@ -199,7 +199,7 @@ const OrdersPage: React.FC = () => {
                             
                             <div className="text-center mx-4">
                               <span className="font-medium text-card-foreground">
-                                Qty: <span className="text-primary">{item.quantity}</span>
+                                Quantity: <span className="text-primary">{item.quantity}</span>
                               </span>
                             </div>
                             

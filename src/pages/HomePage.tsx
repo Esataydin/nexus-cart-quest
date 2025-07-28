@@ -139,7 +139,7 @@ const HomePage: React.FC = () => {
             Discover Amazing Products
           </h1>
           <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-2xl mx-auto">
-            Find the latest tech products at unbeatable prices
+            Find the latest products at unbeatable prices
           </p>
           
           {/* Search Bar */}
