@@ -213,11 +213,11 @@ const CartPage: React.FC = () => {
                     Shopping Cart ({cart.items.length} {cart.items.length === 1 ? 'item' : 'items'})
                   </CardTitle>
                   <Button
-                    variant="outline"
+                    variant="destructive"
                     size="sm"
                     onClick={handleClearCart}
                     disabled={isUpdating || cart.items.length === 0}
-                    className="text-destructive hover:text-destructive"
+                    className="hover:bg-destructive/90"
                   >
                     <Trash2 className="mr-2 h-4 w-4" />
                     Clear Cart
@@ -243,11 +243,11 @@ const CartPage: React.FC = () => {
                     </div>
                     
                     <Button
-                      variant="ghost"
+                      variant="outline"
                       size="sm"
                       onClick={() => handleRemoveProduct(item.productId)}
                       disabled={isUpdating}
-                      className="text-destructive hover:text-destructive p-2"
+                      className="border-destructive/20 text-destructive hover:bg-destructive hover:text-destructive-foreground transition-colors"
                     >
                       <X className="h-4 w-4" />
                     </Button>
