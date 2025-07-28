@@ -99,7 +99,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const register = async (userData: RegisterData) => {
     try {
-      const response = await axios.post('/api/auth/register', userData, {
+      const response = await axios.post('/api/auth/register', {
+        name: `${userData.firstName} ${userData.lastName}`.trim(),
+        email: userData.email,
+        password: userData.password
+      }, {
         headers: {
           'Content-Type': 'application/json'
         }
