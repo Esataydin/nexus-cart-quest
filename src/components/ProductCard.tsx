@@ -43,20 +43,20 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
   const isOutOfStock = product.stock === 0;
 
   return (
-    <Card className="group hover:shadow-lg transition-all duration-300 hover:scale-[1.02] border-border bg-card">
-      <CardContent className="p-4">
+    <Card className="group hover:shadow-lg transition-all duration-300 hover:scale-[1.02] border-border bg-card h-full flex flex-col">
+      <CardContent className="p-4 flex-1">
         {/* Product Info */}
-        <div className="space-y-3">
-          <div className="flex items-start justify-between">
-            <h3 className="font-semibold text-lg text-card-foreground line-clamp-2 group-hover:text-primary transition-colors">
+        <div className="space-y-3 h-full flex flex-col">
+          <div className="space-y-2">
+            <h3 className="font-semibold text-lg text-card-foreground line-clamp-3 group-hover:text-primary transition-colors min-h-[4.5rem]">
               {product.name}
             </h3>
-            <Badge variant="secondary" className="ml-2 flex-shrink-0">
+            <Badge variant="secondary" className="w-fit">
               {product.category}
             </Badge>
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mt-auto">
             <div className="flex flex-col">
               <span className="text-2xl font-bold text-primary">
                 ${product.price.toFixed(2)}
@@ -73,7 +73,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
         </div>
       </CardContent>
 
-      <CardFooter className="p-4 pt-0">
+      <CardFooter className="p-4 pt-0 mt-auto">
         <Button 
           className="w-full" 
           onClick={handleAddToCart}
