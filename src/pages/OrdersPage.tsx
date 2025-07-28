@@ -138,13 +138,13 @@ const OrdersPage: React.FC = () => {
           <div className="space-y-6">
             {orders.map((order) => (
               <Collapsible key={order.id} open={openOrders.has(order.id)} onOpenChange={() => toggleOrder(order.id)}>
-                <Card className="overflow-hidden">
+                <Card className="overflow-hidden border-border bg-card shadow-sm hover:shadow-md transition-all duration-200">
                   <CollapsibleTrigger asChild>
-                    <CardHeader className="bg-muted/50 cursor-pointer hover:bg-muted/70 transition-colors">
+                    <CardHeader className="bg-gradient-to-r from-muted/40 to-muted/60 cursor-pointer hover:from-muted/60 hover:to-muted/80 transition-all duration-200 border-b border-border/50">
                       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
                         <div className="flex-1">
-                          <CardTitle className="flex items-center">
-                            <Package className="mr-2 h-5 w-5" />
+                          <CardTitle className="flex items-center text-card-foreground group-hover:text-primary transition-colors">
+                            <Package className="mr-2 h-5 w-5 text-primary" />
                             Order #{order.id}
                           </CardTitle>
                           <p className="text-sm text-muted-foreground flex items-center mt-1">
@@ -161,9 +161,9 @@ const OrdersPage: React.FC = () => {
                               {order.totalItems} {order.totalItems === 1 ? 'item' : 'items'}
                             </p>
                           </div>
-                          <div className="ml-4">
+                          <div className="ml-4 p-2 rounded-full bg-background/50">
                             {openOrders.has(order.id) ? (
-                              <ChevronUp className="h-5 w-5 text-muted-foreground" />
+                              <ChevronUp className="h-5 w-5 text-primary" />
                             ) : (
                               <ChevronDown className="h-5 w-5 text-muted-foreground" />
                             )}
@@ -172,17 +172,23 @@ const OrdersPage: React.FC = () => {
                       </div>
                     </CardHeader>
                   </CollapsibleTrigger>
-                  <CollapsibleContent>
+                  <CollapsibleContent className="bg-background border-t border-border/30">
                     <CardContent className="p-6">
                       <div className="space-y-4">
+                        <h4 className="text-lg font-semibold text-card-foreground mb-4 flex items-center">
+                          <ShoppingBag className="mr-2 h-5 w-5 text-primary" />
+                          Order Items
+                        </h4>
                         {order.items.map((item, index) => (
-                          <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+                          <div key={index} className="flex items-center justify-between p-4 border border-border rounded-lg bg-card/50 hover:bg-card/80 transition-colors">
                             <div className="flex-1">
                               <div className="flex items-center space-x-4">
                                 <div className="flex-1">
-                                  <h3 className="font-semibold">{item.productName}</h3>
+                                  <h3 className="font-semibold text-card-foreground">{item.productName}</h3>
                                   <div className="flex items-center space-x-2 mt-1">
-                                    <Badge variant="secondary">{item.productCategory}</Badge>
+                                    <Badge variant="secondary" className="bg-secondary/80">
+                                      {item.productCategory}
+                                    </Badge>
                                     <span className="text-sm text-muted-foreground">
                                       ${item.productPrice.toFixed(2)} each
                                     </span>
@@ -192,11 +198,15 @@ const OrdersPage: React.FC = () => {
                             </div>
                             
                             <div className="text-center mx-4">
-                              <span className="font-medium">Quantity: {item.quantity}</span>
+                              <span className="font-medium text-card-foreground">
+                                Qty: <span className="text-primary">{item.quantity}</span>
+                              </span>
                             </div>
                             
                             <div className="text-right">
-                              <p className="font-semibold text-lg"> Total: ${item.totalPrice.toFixed(2)}</p>
+                              <p className="font-semibold text-lg text-primary">
+                                ${item.totalPrice.toFixed(2)}
+                              </p>
                             </div>
                           </div>
                         ))}
